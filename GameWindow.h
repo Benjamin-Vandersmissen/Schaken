@@ -7,7 +7,17 @@
 #include "FL/Fl_Double_Window.H"
 #include "Schaakbord.h"
 #include "FL/Fl.H"
-#include "FL/Fl_Button.H"
+#include "FL/Fl_Box.H"
+#include "FL/Fl_Shared_Image.H"
+#include "FL/Fl_PNG_Image.H"
+#include <algorithm>
+
+
+
+class Schaakstuk : Fl_Box{
+public:
+    Schaakstuk(int a, int b, Pion* pion);
+};
 
 class GameWindow : Fl_Double_Window{
 private:
@@ -17,11 +27,6 @@ public:
 
     Fl_Group* Bord = NULL;
 
-    void SyncBoard();
-
-    Pion* findPion(Fl_Button* b);
 };
-
-void selectedCB(Fl_Widget* w, void* v);
 
 #endif //SCHAKEN_GAMEWINDOW_H

@@ -4,58 +4,36 @@
 
 #include "GameWindow.h"
 
+Fl_PNG_Image* TEXTURE_WIT_PAARD = new Fl_PNG_Image("./Paard_Wit.png");
+Fl_PNG_Image* TEXTURE_WIT_PION = new Fl_PNG_Image("./Pion_Wit.png");
+Fl_PNG_Image* TEXTURE_WIT_KONING = new Fl_PNG_Image("./Koning_Wit.png");
+Fl_PNG_Image* TEXTURE_WIT_KONINGIN = new Fl_PNG_Image("./Koningin_Wit.png");
+Fl_PNG_Image* TEXTURE_WIT_TOREN = new Fl_PNG_Image("./Toren_Wit.png");
+Fl_PNG_Image* TEXTURE_WIT_LOPER = new Fl_PNG_Image("./Loper_Wit.png");
+
+Fl_PNG_Image* TEXTURE_ZWART_PAARD = new Fl_PNG_Image("./Paard_Zwart.png");
+Fl_PNG_Image* TEXTURE_ZWART_PION = new Fl_PNG_Image("./Pion_Zwart.png");
+Fl_PNG_Image* TEXTURE_ZWART_KONING = new Fl_PNG_Image("./Koning_Zwart.png");
+Fl_PNG_Image* TEXTURE_ZWART_KONINGIN = new Fl_PNG_Image("./Koningin_Zwart.png");
+Fl_PNG_Image* TEXTURE_ZWART_TOREN = new Fl_PNG_Image("./Toren_Zwart.png");
+Fl_PNG_Image* TEXTURE_ZWART_LOPER = new Fl_PNG_Image("./Loper_Zwart.png");
+
 GameWindow::GameWindow(int W, int H, const char *l) : Fl_Double_Window(W, H, l) {
     schaakbord = new Schaakbord;
-    this->Bord = new Fl_Group(0,0,this->w(), this->h());
-    {
-        for(int b = 0; b < 8; b++){
-            for(int a = 0; a < 8; a++){
-                Fl_Button* box = new Fl_Button(75*a, 75*b, 75,  75);
-                box->down_box(FL_BORDER_FRAME);
-                box->box(FL_BORDER_BOX);
-                if ((a+b)%2){
-                    box->color(fl_rgb_color(51,34,6));
-                }else{
-                    box->color(FL_LIGHT2);
-                }
-                box->callback(selectedCB, this);
-            }
-        }
-    }
-    this->Bord->end();
-    this->SyncBoard();
+    fl_register_images();
+    new Schaakstuk(0,0,(*schaakbord)(7,7));
     this->show();
 }
 
-void GameWindow::SyncBoard() {
-    for(int a = 0; a < 8; a++){
-        for(int b = 0; b < 8; b++){
-            Pion* pion = (*schaakbord)(a,b);
-            if (pion != NULL){
-                this->Bord->child(a+8*b)->label(pion->getType());
-                this->Bord->child(a+8*b)->labelcolor((pion->getColor() ? FL_WHITE : FL_BLACK));
-            }
-        }
+Schaakstuk::Schaakstuk(int a, int b, Pion *pion) : Fl_Box(200*a, 200*b, 200, 200, pion->getType()){
+    std::vector<Fl_PNG_Image* > textures = {TEXTURE_ZWART_KONING, TEXTURE_ZWART_KONINGIN, TEXTURE_ZWART_LOPER,
+                                            TEXTURE_ZWART_PAARD, TEXTURE_ZWART_PION, TEXTURE_ZWART_TOREN,
+                                            TEXTURE_WIT_KONING, TEXTURE_WIT_KONINGIN, TEXTURE_WIT_LOPER,
+                                            TEXTURE_WIT_PAARD, TEXTURE_WIT_PION, TEXTURE_WIT_TOREN};
+    std::vector<std::string > types = {"Koning", "Koningin", "Loper", "Paard", "Pion", "Toren"};
+    int i;
+    if (std::find(types.begin(), types.end(), (std::string)pion->getType()) != types.end()){
+        i = std::distance(types.begin(), std::find(types.begin(), types.end(), (std::string) pion->getType()));
     }
-    this->Bord->redraw();
-}
-
-Pion *GameWindow::findPion(Fl_Button *b) {
-    for(int i = 0; i < this->Bord->children(); i++){
-        if (this->Bord->child(i) == b)
-            return (*schaakbord)(i%8, i/8);
-    }
-}
-
-void selectedCB(Fl_Widget *w, void *v) {
-    Fl_Button* button = (Fl_Button*) w;
-    w->color2(FL_GREEN);
-    GameWindow* win = (GameWindow*) v;
-    for(int i = 0; i < win->Bord->children(); i++){
-        Fl_Button* b = (Fl_Button*) win->Bord->child(i);
-        b->value(0);
-    }
-    if (win->findPion(button)){
-        button->value(1);
-    }
+    this->image(textures[i+pion->getColor()*types.size()]);
 }
