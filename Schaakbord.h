@@ -27,6 +27,8 @@ public:
     bool lineOfSight(int x1, int y1, int x2, int y2);
 
     Pion* operator()(int x, int y);
+
+    bool validMove(int x1, int y1, int x2, int y2);
 };
 
 std::ostream& operator<<(std::ostream& stream, Schaakbord& bord);

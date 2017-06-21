@@ -15,14 +15,26 @@
 
 
 class Schaakstuk : Fl_Box{
+private:
+    Fl_PNG_Image* img;
+    int a;
+    int b;
+    int _Xoff = 0;
+    int _Yoff = 0;
 public:
-    Schaakstuk(int a, int b, Pion* pion);
+    Schaakstuk(int a, int b, int w, int h, Pion *pion);
+
+    void draw();
+
+    int handle(int event);
 };
 
 class GameWindow : Fl_Double_Window{
 private:
     Schaakbord* schaakbord;
 public:
+    friend class Schaakstuk;
+
     GameWindow(int W, int H, const char *l);
 
     Fl_Group* Bord = NULL;

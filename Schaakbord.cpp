@@ -24,7 +24,7 @@ Schaakbord::Schaakbord() {
 
     for(int i = 0; i <=1; i++){
         for(int a = 0; a < 8; a++){
-            board[a][1+5*i] = new Pion(a, 1 + 6*i, i);
+            board[a][1+5*i] = new Pion(a, 1 + 5*i, i);
         }
     }
     for(int i = 0; i <=1; i++){
@@ -39,6 +39,59 @@ Schaakbord::Schaakbord() {
 }
 
 bool Schaakbord::move(int x1, int y1, int x2, int y2) {
+    if (!validMove(x1,y1,x2,y2))
+        return false;
+    Pion* pion = board[x1][y1];
+    delete board[x2][y2];
+    board[x2][y2] = pion;
+    board[x1][y1] = NULL;
+    pion->move(x2,y2);
+    return true;
+}
+
+bool Schaakbord::lineOfSight(int x1, int y1, int x2, int y2) {
+    if (y1 == y2){
+
+        for(int a = x1+sign(x2-x1); a != x2; a += sign(x2-x1)){
+            if (board[a][y1] != NULL)
+                return false;
+        }
+        return true;
+    }
+    else if (x1 == x2){
+        for(int b = y1+sign(y2-y1); b != y2; b += sign(y2-y1)){
+            if (board[x1][b] != NULL)
+                return false;
+        }
+        return true;
+    }
+    else{
+        for(int i = 1; x1+i*(sign(x2-x1)) != x2 && y1 + i*(sign(y2-y1)) != y2; i++){
+            if(board[x1+i*sign(x2-x1)][y1+i*sign(y2-y1)] != NULL)
+                return false;
+        }
+        return true;
+    }
+}
+
+std::ostream &operator<<(std::ostream &stream, Schaakbord &bord) {
+    for(int b = 0; b  < 8; b++){
+        for(int a = 0; a < 8; a++){
+            if (bord.board[a][b] != NULL)
+                stream << bord.board[a][b]->getType() << ' ';
+            else
+                stream << "////" << ' ';
+        }
+        stream << std::endl;
+    }
+    return stream;
+}
+
+Pion *Schaakbord::operator()(int x, int y) {
+    return board[x][y];
+}
+
+bool Schaakbord::validMove(int x1, int y1, int x2, int y2) {
     if (board[x1][y1] == NULL)
         return false;
     Pion* pion = board[x1][y1];
@@ -66,51 +119,5 @@ bool Schaakbord::move(int x1, int y1, int x2, int y2) {
         if (!lineOfSight(x1,y1,x2,y2))
             return false;
     }
-
-    delete board[x2][y2];
-    board[x2][y2] = pion;
-    board[x1][y1] = NULL;
-    pion->move(x2,y2);
     return true;
-}
-
-bool Schaakbord::lineOfSight(int x1, int y1, int x2, int y2) {
-    if (y1 == y2){
-        for(int a = x1+sign(x2-x1); a < x2; a++){
-            if (board[a][y1] != NULL)
-                return false;
-        }
-        return true;
-    }
-    else if (x1 == x2){
-        for(int b = y1+sign(y2-y1); b < y2; b++){
-            if (board[x1][b] != NULL)
-                return false;
-        }
-        return true;
-    }
-    else{
-        for(int i = 1; x1+i < x2; i++){
-            if(board[x1+i][y1+i] != NULL)
-                return false;
-        }
-        return true;
-    }
-}
-
-std::ostream &operator<<(std::ostream &stream, Schaakbord &bord) {
-    for(int b = 0; b  < 8; b++){
-        for(int a = 0; a < 8; a++){
-            if (bord.board[a][b] != NULL)
-                stream << bord.board[a][b]->getType() << ' ';
-            else
-                stream << "////" << ' ';
-        }
-        stream << std::endl;
-    }
-    return stream;
-}
-
-Pion *Schaakbord::operator()(int x, int y) {
-    return board[x][y];
 }
