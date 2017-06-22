@@ -32,6 +32,7 @@ public:
 class GameWindow : Fl_Double_Window{
 private:
     Schaakbord* schaakbord;
+    std::vector<std::vector<Schaakstuk*> > _bord;
 public:
     friend class Schaakstuk;
 

@@ -50,10 +50,14 @@ GameWindow::GameWindow(int W, int H, const char *l) : Fl_Double_Window(W, H, l) 
     }
     Bord->end();
     for(int a = 0; a < 8; a++){
+        std::vector<Schaakstuk*> row;
         for(int b =0; b < 8; b++){
             if ((*schaakbord)(a,b) != NULL)
-                new Schaakstuk(a , b, 75, 75, (*schaakbord)(a,b));
+                row.push_back(new Schaakstuk(a , b, 75, 75, (*schaakbord)(a,b)));
+            else
+                row.push_back(0);
         }
+        _bord.push_back(row);
     }
     this->show();
 }
@@ -96,13 +100,19 @@ int Schaakstuk::handle(int event) {
         case FL_RELEASE:
             _Xoff = 0;
             _Yoff = 0;
-//            std::cerr << Fl::event_x()/75 << ' ' << Fl::event_y()/75 << std::endl;
             Schaakbord* bord = ((GameWindow*) this->parent())->schaakbord;
             int newA = Fl::event_x()/w();
             int newB = Fl::event_y()/h();
             if (bord->validMove(a,b,newA,newB)){
                 position(w()*newA, h() * newB);
                 bord->move(a,b,newA,newB);
+                std::vector<std::vector<Schaakstuk*> >& _bord = ((GameWindow*) this->parent())->_bord;
+                if (_bord[newA][newB] != NULL){
+                    delete _bord[newA][newB];
+                }
+                _bord[newA][newB] = this;
+                _bord[a][b] = 0;
+
                 a = newA;
                 b = newB;
                 std::cerr << *bord << std::endl;
