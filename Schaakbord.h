@@ -17,6 +17,7 @@
 class Schaakbord {
 private:
     std::vector<std::vector<Pion*> > board;
+    int color = 1;
 public:
     friend std::ostream& operator<<(std::ostream& stream, Schaakbord& bord);
 

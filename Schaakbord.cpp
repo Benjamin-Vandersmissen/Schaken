@@ -42,6 +42,7 @@ bool Schaakbord::move(int x1, int y1, int x2, int y2) {
     if (!validMove(x1,y1,x2,y2))
         return false;
     Pion* pion = board[x1][y1];
+    color = !pion->getColor();
     delete board[x2][y2];
     board[x2][y2] = pion;
     board[x1][y1] = NULL;
@@ -95,6 +96,9 @@ bool Schaakbord::validMove(int x1, int y1, int x2, int y2) {
     if (board[x1][y1] == NULL)
         return false;
     Pion* pion = board[x1][y1];
+    if (pion->getColor() != color)
+        return false;
+
     std::pair<int, int> coords = std::make_pair(x2,y2);
     std::vector<std::pair<int, int> > mogelijkeMoves = pion->validMoves();
     if (std::find(mogelijkeMoves.begin(), mogelijkeMoves.end(), coords) == mogelijkeMoves.end()) //Invalid move
@@ -119,5 +123,6 @@ bool Schaakbord::validMove(int x1, int y1, int x2, int y2) {
         if (!lineOfSight(x1,y1,x2,y2))
             return false;
     }
+
     return true;
 }
